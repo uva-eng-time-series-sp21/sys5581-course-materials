@@ -1,0 +1,486 @@
+---
+title:     "Project Proposal Instructions with example code"
+institute: "SYS 7030 Time Series Analysis & Forecasting, Fall 2020" 
+author:     "Instructor: Arthur Small"
+date:       "Version of `r Sys.Date()`"
+output:
+   # pdf_document:
+   #   toc: false
+  html_notebook:
+    number_sections: true
+    toc: yes
+    toc_depth: 4
+    code_folding: show # options: show, hide
+    fig_caption: yes
+  html_document:
+        keep_md: yes
+  # pdf_document: default
+bibliography: /Users/Arthur/GitRepos/Teaching/time-series/tseries.bib
+link-citations: yes
+---
+
+In this assignment you will develop your initial concept note into a draft of a full project proposal. Treat this assignment as a "dry run" for developing a proposal for a grant or fellowship application, or for your Ph.D. prospectus.
+
+Your proposal should include at least the following sections and information.
+
+**Front matter:** Descriptive title, your name, date, reference to "SYS 7030 Time Series Analysis & Forecasting, Fall 2020".
+
+**Abstract:** A very brief summary of the project.
+
+# Introduction
+
+Give a narrative description of the problem you are addressing, and the methods you will use to address it. Provide context:
+
+-   What is the question you are attempting to answer?
+-   Why is this question important? (Who cares?)
+-   How will you go about attempting to answer this question?
+
+This work addresses the question: Why do people not use probabilistic forecasts for decision-making [@councilCompletingForecastCharacterizing2007]?
+
+# The data and the data-generating process
+
+Describe the data set you will be analyzing, and where it comes from, how it was generated and collected. Identify the source of the data. Give a narrative description of the data-generating process: this piece is critical .
+
+Since these will be time series data: identify the frequency of the data series (e.g., hourly, monthly), and the period of record.
+
+```{r set up coding environment, include=FALSE, message=FALSE}
+# library(dplyr) -- don't need this if you are loading the entire 'tidyverse' suite
+library(tidyverse)
+library(lubridate) # For easy handling of time-indexed objects
+```
+
+```{r open connection to database, eval=FALSE, include=FALSE}
+# Open connection to a remote database
+# Make sure your VPN network connection is active if needed!
+
+# if(!('RPostgreSQL' %in% installed.packages())) install.packages('RPostgreSQL')
+library(RPostgreSQL)
+
+# "my_postgres_credentials.R" contains the log-in information
+source("/Users/Arthur/GitRepos/Teaching/my_postgres_db_credentials.R")
+
+# Open connection
+db_driver <- dbDriver("PostgreSQL")
+db <- dbConnect(db_driver,user=user, password=password,dbname="postgres", host=host)
+rm(password) 
+
+# check the connection: If function returns value TRUE, the connection is working
+dbExistsTable(db, "metadata")
+```
+
+```{r retrieve data from db, eval=FALSE, message=FALSE}
+
+esales <- dbGetQuery(db,'SELECT * from eia_elec_sales_va_all_m') # SQL code to retrieve data from a table in the remote database
+# str(esales)
+esales <- as_tibble(esales) # Convert dataframe to a 'tibble' for tidyverse work
+# str(esales)
+```
+
+```{r save data in Apache Arrow format, eval=FALSE}
+# Reference: https://arrow.apache.org/docs/r/
+# if(!('arrow' %in% installed.packages())) install.packages('arrow')
+library(arrow)
+write_feather(esales, "esales.feather")
+```
+
+```{r close db connection, eval=FALSE}
+# Close connection -- this is good practice
+dbDisconnect(db)
+dbUnloadDriver(db_driver)
+```
+
+# Exploratory data analysis
+
+```{r read in data}
+library(arrow)
+esales <- read_feather("esales.feather")
+
+str(esales)
+```
+
+## Provide a brief example of the data, showing how they are structured.
+
+```{r print the data as a table}
+print(esales)
+```
+
+```{r use tidyverse syntax to perform some simple data manipulations}
+# References: https://www.tidyverse.org/, https://dplyr.tidyverse.org/
+
+esales %>%
+  filter(year == 2019) %>%
+  filter(value > 9000) %>%
+  print()
+
+esales %>%
+  group_by(month) %>%
+  summarise(mean = mean(value)) -> mean_esales_by_month
+
+esales %>%
+  mutate(sales_TWh = value/1000) %>%
+  select(-value)
+  
+# filter(data object, condition) : syntax for filter() command
+```
+
+## Plot the time series.
+
+```{r use ggplot2 to generate a plot}
+#Reference: https://ggplot2.tidyverse.org/
+
+ggplot(data=esales, aes(x=date,y=value)) + 
+  geom_line() + xlab("Year") + ylab("Virginia monthly total electricity sales (GWh)")
+
+```
+
+```{r}
+# install.packages("tsibble")
+library(tsibble) # Reference: https://tsibble.tidyverts.org/articles/intro-tsibble.html
+
+esales %>% as_tsibble(index = date) -> esales_tbl_ts
+
+print(esales_tbl_ts)
+```
+
+```{r}
+library(lubridate) # Make it easy to deal with dates
+
+esales_tbl_ts %>% filter(month==3)
+
+esales_tbl_ts %>% filter(month(date)==3)
+
+esales_tbl_ts %>%
+  select(date, sales_GWh = value) -> elsales_tbl_ts
+
+print(elsales_tbl_ts)
+```
+
+## Perform and report the results of other exploratory data analysis
+
+```{r make a histogram of the data}
+
+hist(elsales_tbl_ts$sales_GWh, breaks=40)
+```
+
+```{r}
+# install.packages("feasts"), Reference: https://feasts.tidyverts.org/
+library(feasts)
+
+elsales_tbl_ts %>% 
+  mutate(Month = yearmonth(date)) %>% 
+  as_tsibble(index = Month) -> vaelsales_tbl_ts
+
+
+vaelsales_tbl_ts %>% gg_season(sales_GWh, labels = "both") + ylab("Virginia electricity sales (GWh)")
+```
+
+```{r}
+# install.packages('tsibbledata')
+library(tsibbledata)
+
+aus_production
+
+aus_production %>% gg_season(Electricity)
+
+aus_production %>% gg_season(Beer)
+
+
+```
+
+```{r}
+vaelsales_tbl_ts %>% 
+  gg_subseries(sales_GWh)
+
+# aus_production %>% gg_subseries(Beer)
+```
+
+```{r plot lagged values}
+vaelsales_tbl_ts  %>% filter(month(Month) %in% c(3,6,9,12)) %>% gg_lag(sales_GWh, lags = 1:2)
+
+vaelsales_tbl_ts  %>% filter(month(Month) == 1) %>% gg_lag(sales_GWh, lags = 1:2)
+```
+
+```{r}
+vaelsales_tbl_ts %>% ACF(sales_GWh) %>% autoplot()
+```
+
+```{r perform automated time series decomposition}
+# if(!('fpp3' %in% installed.packages())) install.packages('fpp3')
+library(fpp3)
+
+# decompose(vaelsales_tbl_ts)
+```
+
+```{r perform additive STL decomposition of the VA electricity sales time series}
+vaelsales_tbl_ts %>%
+  model(STL(sales_GWh ~ trend(window=21) + season(window='periodic'), robust = TRUE)) %>%
+  components() %>%
+  autoplot()
+```
+
+```{r perform multiplicative STL decomposition of the VA electricity sales time series}
+vaelsales_tbl_ts %>%
+  mutate(ln_sales_GWh = log(sales_GWh)) %>%
+  model(STL(ln_sales_GWh ~ trend(window=21) + season(window='periodic'),
+    robust = TRUE)) %>%
+  components() %>%
+  autoplot()
+```
+
+```{r}
+vaelsales_tbl_ts %>%
+  features(sales_GWh, feat_stl)
+```
+
+```{r}
+vaelsales_tbl_ts %>%
+  features(sales_GWh, feature_set(pkgs="feasts"))
+```
+
+# Example: Gross Domestic Product data
+
+## Exploratory data analysis
+
+```{r}
+library(tsibbledata) # Data sets package
+
+print(global_economy)
+```
+
+```{r}
+global_economy %>% filter(Country=="Sweden") %>% print()
+```
+
+```{r}
+global_economy %>%
+  filter(Country=="Sweden") %>%
+  autoplot(GDP) +
+  ggtitle("GDP for Sweden") + ylab("$US billions")
+```
+
+## Fitting data to simple models
+
+```{r}
+global_economy %>% model(trend_model = TSLM(GDP ~ trend())) -> fit
+
+fit
+
+
+```
+
+```{r}
+fit %>% filter(Country == "Sweden") %>% residuals()
+```
+
+```{r}
+
+fit %>% filter(Country == "Sweden") %>% residuals() %>% autoplot(.resid)
+```
+
+### Work with ln(GDP)
+
+```{r}
+global_economy %>%
+  filter(Country=="Sweden") %>%
+  autoplot(log(GDP)) +
+  ggtitle("ln(GDP) for Sweden") + ylab("$US billions")
+```
+
+```{r}
+global_economy %>%
+  model(trend_model = TSLM(log(GDP) ~ trend())) -> logfit
+```
+
+```{r}
+logfit %>% filter(Country == "Sweden") %>% residuals() %>% autoplot()
+```
+
+```{r}
+global_economy %>% model(trend_model = TSLM(log(GDP) ~ log(Population))) -> fit3
+
+fit3 %>% filter(Country == "Sweden") %>% residuals() %>% autoplot()
+
+```
+
+# Producing forecasts
+
+```{r}
+fit %>% forecast(h = "3 years") -> fcast3yrs
+
+fcast3yrs
+
+```
+
+```{r}
+
+fcast3yrs %>% filter(Country == "Sweden", Year == 2020) %>% str()
+```
+
+```{r visualize forecasts}
+fcast3yrs %>% 
+  filter(Country=="Sweden") %>%
+  autoplot(global_economy) +
+  ggtitle("GDP for Sweden") + ylab("$US billions")
+```
+
+## Model residuals vs. forecast errors
+
+Model residuals:
+
+Your data: $y_1, y_2, \ldots, y_T$
+
+Fitted values: $\hat{y}_1, \hat{y}_2, \ldots, \hat{y}_T$
+
+Model residuals: $e_t = y_t - \hat{y}_t$
+
+Forecast errors:
+
+```{r}
+augment(fit)
+```
+
+```{r}
+augment(fit) %>% filter(Country == "Sweden") %>%
+  ggplot(aes(x = .resid)) +
+  geom_histogram(bins = 20) +
+  ggtitle("Histogram of residuals")
+```
+
+## Are the model residuals auto-correlated?
+
+```{r}
+augment(fit) %>% filter(Country == "Sweden") -> augSweden
+
+augSweden %>%
+  ACF(.resid) %>%
+  autoplot() + ggtitle("ACF of residuals")
+```
+
+```{r}
+augment(fit3) %>% filter(Country == "Sweden") -> augSweden3
+
+augSweden3 %>%
+  ACF(.resid) %>%
+  autoplot() + ggtitle("ACF of residuals")
+```
+
+
+# Example: GDP, several models, several countries
+
+
+```{r}
+library(tsibbledata) # Data sets package
+
+nordic <- c("Sweden", "Denmark", "Norway", "Finland")
+
+(global_economy %>% filter(Country %in% nordic) -> nordic_economy)
+
+```
+
+```{r}
+nordic_economy %>% autoplot(GDP)
+```
+
+```{r}
+fitnord <- nordic_economy %>%
+  model(
+    trend_model = TSLM(GDP ~ trend()),
+    trend_model_ln = TSLM(log(GDP) ~ trend()),
+    ets = ETS(GDP ~ trend("A")),
+    arima = ARIMA(GDP)
+  )
+
+fitnord
+```
+
+```{r}
+fitnord %>%
+  select(arima) %>%
+  coef()
+```
+
+
+Denmark: ARMA(1,1)
+
+Finland: MA(2)
+
+Norway: MA(1)
+
+Sweden: MA(2)
+
+```{r}
+nordic_economy %>%
+  model(arima_constrained = ARIMA(GDP ~ pdq(1,0,2))) %>% select(arima_constrained) %>% coef()
+```
+
+```{r}
+fitnord %>% coef() 
+```
+
+```{r}
+fitnord %>%  glance()  
+```
+
+```{r}
+fitnord %>% filter(Country == "Denmark") %>% select(arima) %>% report()
+```
+
+```{r}
+fitnord %>%
+  accuracy() %>%
+  arrange(Country, MPE)
+```
+
+
+# Statistical model
+
+## Formal model of data-generating process
+
+Write down an equation (or set of equations) that represent the data-generating process formally.
+
+For the electricity sales data, maybe the process looks like:
+
+$$ y_t = Trend_t X Seasonal_t X Residual_t $$ $$ y_t = \beta_0 + \beta_1 t + \beta_2 m + \varepsilon_t $$
+
+```{r, eval=FALSE}
+# ETS forecasts
+USAccDeaths %>%
+  ets() %>%
+  forecast() %>%
+  autoplot()
+```
+
+```{r, eval=FALSE}
+str(taylor)
+plot(taylor)
+```
+
+If applicable: describe any transformations of the data (e.g., differencing, taking logs) you need to make to get the data into a form (e.g., linear) ready for numerical analysis.
+
+What kind of process is it? $AR(p)$? White noise with drift? Something else?
+
+Write down an equation expressing each realization of the stochastic process $y_t$ as a function of other observed data (which could include lagged values of $y$), unobserved parameters ($\beta$), and an error term ($\varepsilon_t$). Ex:
+
+$$y = X\cdot\beta + \varepsilon$$ Add a model of the error process. Ex: $\varepsilon \sim N(0, \sigma^2 I_T)$.
+
+## Discussion of the statistical model
+
+Describe how the formal statistical model captures and aligns with the narrative of the data-generating process. Flag any statistical challenges raised by the data generating process, e.g. selection bias; survivorship bias; omitted variables bias, etc.
+
+# Plan for data analysis
+
+Describe what information you wish to extract from the data. Do you wish to... estimate the values of the unobserved model parameters? create a tool for forecasting? estimate the exceedance probabilities for future realizations of $y_t$?
+
+Describe your plan for getting this information. OLS regression? Some other statistical technique?
+
+If you can: describe briefly which computational tools you will use (e.g., R), and which packages you expect to draw on.
+
+# Submission requirements
+
+Prepare your proposal using Markdown . (You may find it useful to generate your Markdown file from some other tool, e.g. R Markdown in R Studio.) Submit your proposal by pushing it to your repo within the course organization on Github. When your proposal is ready, notify the instructor by also creating a submission for this assignment on Collab. Please also upload a PDF version of your proposal to Collab as part of your submission.
+
+# Comment
+
+Depending on your prior experience, you may find this assignment challenging. Treat this assignment as an opportunity to make progress on your own research program. Make your proposal as complete as you can. But note that this assignment is merely the First Draft. You will have more opportunity to refine your work over the next two months, in consultation with the instructor, your advisor, and your classmates.
+
+# References
