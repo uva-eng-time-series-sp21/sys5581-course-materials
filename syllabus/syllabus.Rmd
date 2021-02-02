@@ -12,6 +12,7 @@ output:
   # html_document:
   #   keep_md: true
 
+urlcolor: blue
 geometry: margin=1in
 
 fontfamily: mathpazo

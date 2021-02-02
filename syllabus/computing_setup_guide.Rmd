@@ -1,0 +1,107 @@
+---
+title:  "SYS 5581 Time Series and Forecasting"
+author: "Computing setup and guide"
+date:   "University of Virginia Engineering, Spring 2021"
+
+output: 
+  pdf_document:
+#   keep_tex: true
+    fig_caption: yes
+    latex_engine: pdflatex
+
+  # html_document:
+  #   keep_md: true
+
+urlcolor: blue
+geometry: margin=1in
+
+fontfamily: mathpazo
+fontsize: 11pt
+header-includes:
+   - \linespread{1.05}
+---
+
+```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
+knitr::opts_chunk$set(cache=TRUE)
+knitr::opts_chunk$set(fig.path='figs/')
+knitr::opts_chunk$set(cache.path='_cache/')
+knitr::opts_chunk$set(warning=F, message=F)
+# knitr::opts_knit$get(kable.force.latex = TRUE)
+```
+
+
+
+```{r dates_bib, include=FALSE}
+# knitr::opts_chunk$set(cache=FALSE, dev='pdf')
+# mon <- as.Date("2016-08-15")
+# # fri <- as.Date("2016-01-08")
+advdate <- function(obj, adv) {}
+# advdate <- function(obj, adv) {
+#  tmon <- obj + 7*(adv-1)
+#  tfri <- obj + 4 + 7*(adv-1)
+#  tmon <- format(tmon, format="%m/%d")
+#  tfri <- format(tfri, format="%m/%d")
+#  zadv <- sprintf("%02d", adv)
+#  tmp <- paste("Week ",zadv,sep='',", ", tmon," - ",tfri)
+#  return(tmp)
+# }
+# library(RefManageR)
+# # library(knitcitations)
+# # library(rcrossref)
+# bib <- ReadBib("master.bib")
+# myopts <- BibOptions(bib.style = "authoryear", style="latex", first.inits=FALSE, max.names = 20)
+```
+
+The course relies on computing resources. Please install the software as indicated on your local machine, and familiarize yourself with the associated documentation. 
+
+# The R programming language
+
+* [Download and install R](https://cran.rstudio.com/), v. 3.0.1+.
+* [Download and install R Studio](https://rstudio.com/products/rstudio/download/#download), v. 1.4.1+. 
+  - R Studio is an integrated development environment (IDE) for R. It offers a variety of utilities to enhance the experience of coding and generating documents.
+* Install the [Tidyverse packages for R](https://www.tidyverse.org/): From the Console tab in R Studio (or from R running in a Terminal window), enter: `install.packages("tidyverse")`.
+  - Tidyverse is a collection of packages that extend the capabilities of R for doing data science.
+* Install the [tidyverts packages for R](https://tidyverts.org/): From the Console tab in R Studio (or from R running in a Terminal window), enter: `install.packages("tidyverts")`.
+  - tidyverts is a collection of R packages for time series analysis designed to work well with the Tidyverse packages.
+
+# Git and Github
+
+[Git](https://git-scm.com/) is software for version control. Github is a web service that provides remote storage and access to files via git. This setup greatly facilitates collaboration between multiple individuals working on the same code base.
+
+* [Follow these instructions](https://jennybc.github.io/2014-05-12-ubc/ubc-r/session03_git.html) to [download and install git](https://git-scm.com/downloads) and to link git with R Studio.
+
+A collection of files associated with a single project is in git-speak called a "repository" or *"repo"*. You should already have a basic repo set up for you on the course site on Github. The next step is to copy ("clone") this remote repo to your local machine.
+
+* Clone your course repo on Github to a new R Studio project on your local machine.
+  - Navigate to [the course website on Github](https://github.com/uva-eng-time-series-sp21). Select your repo.
+  - Click on the green button labeled "Code". Copy the URL.
+  - In the R Studio window, from the pull-down menu in the upper-right corner, select `New Project...`, `Version Control`, `Git`. Paste the URL into the dialog box labeled `Repository URL`.
+  - Optional: Change the name of the project folder, and the location of this folder on your local directory tree.
+  - Click on `Create Project`. The files from your remote repo should be copied to your local machine in a new folder with the name you chose.
+  
+* Optional: [Download and install the Github desktop client](https://git-scm.com/downloads/guis), or an alternative GUI client.
+  - The git operations you need for this course can be managed within R Studio, from the `Git` tab. Some more advanced operations require using either a Terminal window, or a Git desktop client. 
+  
+* [Review the documentation for git](https://git-scm.com/) and [Github](https://guides.github.com/). Learn the basics.
+
+
+# Markdown and R Markdown
+
+[Coming soon...]
+
+https://www.markdownguide.org/
+
+https://rmarkdown.rstudio.com/
+
+# Bibliographic resources: Zotero and Bibtex
+
+[Coming soon...]
+
+# General course web resources
+
+  * [Collab class site](https://collab.its.virginia.edu), for basic course information, assignments, office hours sign-up, links to online textbook and other resources.
+  * [Github class site](https://github.com/uva-eng-time-series-sp21), for posting and sharing code.
+  * Zoom, for class sessions, recordings, and office hours.
+
+
+
