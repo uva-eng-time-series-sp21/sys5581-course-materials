@@ -4,13 +4,13 @@ author: "Instructor: Arthur Small"
 date:   "University of Virginia Engineering, Spring 2021"
 
 output: 
-  pdf_document:
-#   keep_tex: true
-    fig_caption: yes
-    latex_engine: pdflatex
-
-  # html_document:
-  #   keep_md: true
+#   pdf_document:
+# #   keep_tex: true
+#     fig_caption: yes
+#     latex_engine: pdflatex
+#     
+  html_document:
+    keep_md: true
 
 geometry: margin=1in
 
@@ -20,36 +20,11 @@ header-includes:
    - \linespread{1.05}
 ---
 
-```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
-knitr::opts_chunk$set(cache=TRUE)
-knitr::opts_chunk$set(fig.path='figs/')
-knitr::opts_chunk$set(cache.path='_cache/')
-knitr::opts_chunk$set(warning=F, message=F)
-# knitr::opts_knit$get(kable.force.latex = TRUE)
-```
 
 
 
-```{r dates_bib, include=FALSE}
-# knitr::opts_chunk$set(cache=FALSE, dev='pdf')
-# mon <- as.Date("2016-08-15")
-# # fri <- as.Date("2016-01-08")
-advdate <- function(obj, adv) {}
-# advdate <- function(obj, adv) {
-#  tmon <- obj + 7*(adv-1)
-#  tfri <- obj + 4 + 7*(adv-1)
-#  tmon <- format(tmon, format="%m/%d")
-#  tfri <- format(tfri, format="%m/%d")
-#  zadv <- sprintf("%02d", adv)
-#  tmp <- paste("Week ",zadv,sep='',", ", tmon," - ",tfri)
-#  return(tmp)
-# }
-# library(RefManageR)
-# # library(knitcitations)
-# # library(rcrossref)
-# bib <- ReadBib("master.bib")
-# myopts <- BibOptions(bib.style = "authoryear", style="latex", first.inits=FALSE, max.names = 20)
-```
+
+
 
 *Class meetings:* MW 09:30-10:45 a.m. online via Zoom
 
