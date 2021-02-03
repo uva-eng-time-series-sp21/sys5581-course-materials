@@ -1,13 +1,13 @@
 ---
 title:  "SYS 5581 Time Series and Forecasting"
 author: "Computing setup and guide"
-date:   "Version of `r Sys.Date()`"
+date:   "Version of 2021-02-03"
 
 output: 
-  pdf_document:
-#   keep_tex: true
-    fig_caption: yes
-    latex_engine: pdflatex
+#   pdf_document:
+# #   keep_tex: true
+#     fig_caption: yes
+#     latex_engine: pdflatex
 
   html_document:
     keep_md: true
@@ -21,36 +21,11 @@ header-includes:
    - \linespread{1.05}
 ---
 
-```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
-knitr::opts_chunk$set(cache=TRUE)
-knitr::opts_chunk$set(fig.path='figs/')
-knitr::opts_chunk$set(cache.path='_cache/')
-knitr::opts_chunk$set(warning=F, message=F)
-# knitr::opts_knit$get(kable.force.latex = TRUE)
-```
 
 
 
-```{r dates_bib, include=FALSE}
-# knitr::opts_chunk$set(cache=FALSE, dev='pdf')
-# mon <- as.Date("2016-08-15")
-# # fri <- as.Date("2016-01-08")
-advdate <- function(obj, adv) {}
-# advdate <- function(obj, adv) {
-#  tmon <- obj + 7*(adv-1)
-#  tfri <- obj + 4 + 7*(adv-1)
-#  tmon <- format(tmon, format="%m/%d")
-#  tfri <- format(tfri, format="%m/%d")
-#  zadv <- sprintf("%02d", adv)
-#  tmp <- paste("Week ",zadv,sep='',", ", tmon," - ",tfri)
-#  return(tmp)
-# }
-# library(RefManageR)
-# # library(knitcitations)
-# # library(rcrossref)
-# bib <- ReadBib("master.bib")
-# myopts <- BibOptions(bib.style = "authoryear", style="latex", first.inits=FALSE, max.names = 20)
-```
+
+
 
 The course relies on computing resources. Please install the software as indicated on your local machine, and familiarize yourself with the associated documentation. 
 
@@ -59,7 +34,6 @@ The course relies on computing resources. Please install the software as indicat
 We will do our coding in R, a programming language especially well-suited to statistical computing. 
 
 * [Download and install R](https://cran.rstudio.com/), v. 3.0.1+.
-  - Note: There is a later version, v. 4.0.2, in development, but you shouldn't need it.
 
 [R Studio](https://rstudio.com/products/rstudio/) is an integrated development environment (IDE) for R. It offers a variety of utilities to enhance the experience of coding and generating documents.
 
@@ -69,13 +43,9 @@ We will do our coding in R, a programming language especially well-suited to sta
 
 * Install the Tidyverse: From the Console tab in R Studio (or from R running in a Terminal window), enter: `install.packages("tidyverse")`.
 
-[Tidyverts](https://tidyverts.org/) is a collection of R packages for time series analysis designed to work well with the Tidyverse packages. Each package in the tidyverts suite needs to be installed individually:
+[Tidyverts](https://tidyverts.org/) is a collection of R packages for time series analysis designed to work well with the Tidyverse packages.
 
-* From the Console tab in R Studio (or from R running in a Terminal window), enter:
-```{r, eval=FALSE}
-install.packages(c("tsibble", "tsibbledata", "feasts", "fable"))
-```
-
+* Each package in the tidyverts suite needs to be installed individually. From the Console tab in R Studio (or from R running in a Terminal window), enter: `install.packages(c("tsibble", "tsibbledata", "feasts", "fable"))`.
   - You don't need to install the `tsibbletalk` and `fable.prophet` packages; we probably won't use them in this course. 
   
 
