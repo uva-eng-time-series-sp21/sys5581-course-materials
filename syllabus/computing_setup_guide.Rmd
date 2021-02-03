@@ -68,6 +68,10 @@ The course relies on computing resources. Please install the software as indicat
 
 [Git](https://git-scm.com/) is software for version control. Github is a web service that provides remote storage and access to files via git. This setup greatly facilitates collaboration between multiple individuals working on the same code base.
 
+First watch this short YouTube video to get an orientation to git and Github: [Git and GitHub for an Organized Project (STAT 545 Episode 2-A)](https://www.youtube.com/watch?v=l2ftm-YwJs8) from the University of British Columbia.
+
+Then install git on your machine and link it to your R Studio instance and your file repository on Github:
+
 * [Follow these instructions](https://jennybc.github.io/2014-05-12-ubc/ubc-r/session03_git.html) to [download and install git](https://git-scm.com/downloads) and to link git with R Studio.
 
 A collection of files associated with a single project is in git-speak called a "repository" or *"repo"*. You should already have a basic repo set up for you on the course site on Github. The next step is to copy ("clone") this remote repo to your local machine.
@@ -82,18 +86,23 @@ A collection of files associated with a single project is in git-speak called a 
 * Optional: [Download and install the Github desktop client](https://git-scm.com/downloads/guis), or an alternative GUI client.
   - The git operations you need for this course can be managed within R Studio, from the `Git` tab. Some more advanced operations require using either a Terminal window, or a Git desktop client. 
   
-* [Review the documentation for git](https://git-scm.com/) and [Github](https://guides.github.com/). Learn the basics.
+As you get going, you will likely want to learn more about how to work with git and Github. [Review the documentation for git](https://git-scm.com/) and [this Github Guide](https://guides.github.com/introduction/flow/). Learn the basics.
 
 
 # Markdown and R Markdown
 
+Markdown is a markup language: a set of formatting instructions for rendering documents. R Markdown is an extension of Markdown that allows for embedding chunks of R code into a Markdown document. In this course, we will write our work in R Markdown within the R Studio environment, then use the `knitr` package to generate HTML and PDF output files.
 
+For a nice introduction to Markdown and R Markdown, watch the short YouTube video [Reproducible Reports with R Markdown (STAT 545 Episode 3-A)](https://www.youtube.com/watch?v=ZzDSkBgt9xQ) from the University of British Columbia.
 
-[Coming soon...]
+As you proceed in creating your documents, you will probably want to access additional resources:
 
-https://www.markdownguide.org/
+* From within R Studio, you can access an R Markdown Cheat Sheet via `Help/Cheatsheets`.
 
-https://rmarkdown.rstudio.com/
+* Markdown reference: https://www.markdownguide.org/
+
+* R Markdown reference: https://rmarkdown.rstudio.com/
+
 
 # Bibliographic resources: Zotero and Bibtex
 
