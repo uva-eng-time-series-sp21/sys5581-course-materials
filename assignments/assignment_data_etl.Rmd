@@ -1,0 +1,82 @@
+---
+title:  "Assignment: Tidy Your Data"
+author: |
+    | SYS 5581 Time Series and Forecasting 
+    | University of Virginia Engineering, Spring 2021
+    | 
+    | Instructor: Arthur Small
+date:   "Version of `r Sys.Date()`"
+
+output: 
+  pdf_document:
+#   keep_tex: true
+    fig_caption: yes
+    latex_engine: pdflatex
+
+  # html_document:
+  #   keep_md: true
+
+urlcolor: blue
+geometry: margin=1in
+
+fontfamily: mathpazo
+fontsize: 11pt
+header-includes:
+   - \linespread{1.05}
+
+bibliography: /Users/Arthur/GitRepos/Teaching/time-series/tseries.bib
+---
+
+```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
+knitr::opts_chunk$set(cache=TRUE)
+knitr::opts_chunk$set(fig.path='figs/')
+knitr::opts_chunk$set(cache.path='_cache/')
+knitr::opts_chunk$set(warning=F, message=F)
+# knitr::opts_knit$get(kable.force.latex = TRUE)
+```
+
+
+
+```{r dates_bib, include=FALSE}
+# knitr::opts_chunk$set(cache=FALSE, dev='pdf')
+# mon <- as.Date("2016-08-15")
+# # fri <- as.Date("2016-01-08")
+advdate <- function(obj, adv) {}
+# advdate <- function(obj, adv) {
+#  tmon <- obj + 7*(adv-1)
+#  tfri <- obj + 4 + 7*(adv-1)
+#  tmon <- format(tmon, format="%m/%d")
+#  tfri <- format(tfri, format="%m/%d")
+#  zadv <- sprintf("%02d", adv)
+#  tmp <- paste("Week ",zadv,sep='',", ", tmon," - ",tfri)
+#  return(tmp)
+# }
+# library(RefManageR)
+# # library(knitcitations)
+# # library(rcrossref)
+# bib <- ReadBib("master.bib")
+# myopts <- BibOptions(bib.style = "authoryear", style="latex", first.inits=FALSE, max.names = 20)
+```
+
+
+
+Before undertaking any data analysis project, you need to organize your data into a format to make it ready for analysis. Very commonly, the data you wish to work with will not come to you in a nice format that makes it ready to analyze. You typically will need first to *extract* your data from its original source (e.g., an Excel file, or cloud hosting service). Often it will be necessary to *transform* the data, applying a sequence of manipulations to get it into a nice format such as a single table. If you have saved your prepared table to a database or local file, your may finally need to *load* the data into memory on your working machine as a prelude to commence analysis. These steps together are the *extract-transform-load* (ETL) stage of a data analysis project.
+
+The bad news is that working data scientists generally report that the ETL stage is the most time-consuming part of a data science project. The good news is that the `R` `tidyverse` packages offer a number of helpful tools to somewhat ease the pain of ETL work, also known informally as *data wrangling*.[^1]
+
+[^1]: "Wrangling" refers to work with cattle, sheep, and other livestock.
+
+The ETL steps needed for a given project will depend on the nature of the data and on how they are originally organized. We can characterize how we want the data to look at the end of the ETL stage. To the extent possible, we want the data to be *tidy*.
+
+
+# Tidy data
+
+Hadley Wickham [-@tidy-data] codified the concept of [tidy data](https://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html) as follows:
+
+> Tidy data is a standard way of mapping the meaning of a dataset to its structure. A dataset is messy or tidy depending on how rows, columns and tables are matched up with observations, variables and types. In tidy data:
+
+> 1. Each variable forms a column.
+> 2. Each observation forms a row.
+> 3. Each type of observational unit forms a table.
+
+
