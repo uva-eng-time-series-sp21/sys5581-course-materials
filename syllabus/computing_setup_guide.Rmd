@@ -29,29 +29,6 @@ knitr::opts_chunk$set(warning=F, message=F)
 # knitr::opts_knit$get(kable.force.latex = TRUE)
 ```
 
-
-
-```{r dates_bib, include=FALSE}
-# knitr::opts_chunk$set(cache=FALSE, dev='pdf')
-# mon <- as.Date("2016-08-15")
-# # fri <- as.Date("2016-01-08")
-advdate <- function(obj, adv) {}
-# advdate <- function(obj, adv) {
-#  tmon <- obj + 7*(adv-1)
-#  tfri <- obj + 4 + 7*(adv-1)
-#  tmon <- format(tmon, format="%m/%d")
-#  tfri <- format(tfri, format="%m/%d")
-#  zadv <- sprintf("%02d", adv)
-#  tmp <- paste("Week ",zadv,sep='',", ", tmon," - ",tfri)
-#  return(tmp)
-# }
-# library(RefManageR)
-# # library(knitcitations)
-# # library(rcrossref)
-# bib <- ReadBib("master.bib")
-# myopts <- BibOptions(bib.style = "authoryear", style="latex", first.inits=FALSE, max.names = 20)
-```
-
 The course relies on computing resources. Please install the software as indicated on your local machine, and familiarize yourself with the associated documentation. 
 
 # The R programming language, and related resources
@@ -67,7 +44,14 @@ We will do our coding in R, a programming language especially well-suited to sta
 
 [Tidyverse](https://www.tidyverse.org/) is a collection of packages that extend the capabilities of R for doing data science.
 
-* Install the Tidyverse: From the Console tab in R Studio (or from R running in a Terminal window), enter: `install.packages("tidyverse")`.
+* Install the Tidyverse packages for R: From the Console tab in R Studio (or from R running in a Terminal window), enter:
+```{r, eval=FALSE}
+install.packages("tidyverse")
+```
+  - Alternatively, you may install packages via the `Packages` tab in R Studio.
+
+* Optional: To learn how to wrangle and visualize data using the Tidyverse packages, you may find it useful to go through the [Tidyverse Fundamentals with R](https://learn.datacamp.com/skill-tracks/tidyverse-fundamentals) modules on [Datacamp](https://learn.datacamp.com/). 
+  - Datacamp also offers [a range of other learning modules for developing data science skills in R](https://learn.datacamp.com/career-tracks/data-scientist-with-r). 
 
 [Tidyverts](https://tidyverts.org/) is a collection of R packages for time series analysis designed to work well with the Tidyverse packages. Each package in the tidyverts suite needs to be installed individually:
 
@@ -78,6 +62,8 @@ install.packages(c("tsibble", "tsibbledata", "feasts", "fable"))
 
   - You don't need to install the `tsibbletalk` and `fable.prophet` packages; we probably won't use them in this course. 
   
+
+
 
 # Git and Github
 
