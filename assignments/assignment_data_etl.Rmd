@@ -36,28 +36,6 @@ knitr::opts_chunk$set(warning=F, message=F)
 ```
 
 
-
-```{r dates_bib, include=FALSE}
-# knitr::opts_chunk$set(cache=FALSE, dev='pdf')
-# mon <- as.Date("2016-08-15")
-# # fri <- as.Date("2016-01-08")
-advdate <- function(obj, adv) {}
-# advdate <- function(obj, adv) {
-#  tmon <- obj + 7*(adv-1)
-#  tfri <- obj + 4 + 7*(adv-1)
-#  tmon <- format(tmon, format="%m/%d")
-#  tfri <- format(tfri, format="%m/%d")
-#  zadv <- sprintf("%02d", adv)
-#  tmp <- paste("Week ",zadv,sep='',", ", tmon," - ",tfri)
-#  return(tmp)
-# }
-# library(RefManageR)
-# # library(knitcitations)
-# # library(rcrossref)
-# bib <- ReadBib("master.bib")
-# myopts <- BibOptions(bib.style = "authoryear", style="latex", first.inits=FALSE, max.names = 20)
-```
-
 This assignment focuses on the steps needed to acquire data from its source location, organize it, and prepare it for time series analysis. You are asked to:
 
 1. Identify a time series data set that you might use as the basis for your class project.
@@ -126,11 +104,12 @@ In this step of the assignment, you will convert your tidy data frame into a `ts
 
 # Step 5: Generate at least one table or figure
 
-This step simply confirms that you have completed the ETL process and that your data is ready to analyze. You could simply add a line of code: `print(name_of_your_tsibble)` to generate a simple table.
+This step simply confirms that you have completed the ETL process and that your data is ready to analyze. You could simply add a line of code: `print([name_of_your_tsibble])` to generate a simple table.
 
-\ \ 
 
-&nbsp;
+## Additional resources and next steps
+
+To learn how to wrangle and visualize data using the Tidyverse packages, you may find it useful to go through the [Tidyverse Fundamentals with R](https://learn.datacamp.com/skill-tracks/tidyverse-fundamentals) modules on [Datacamp](https://learn.datacamp.com/), or [the analogous course on Coursera](https://www.coursera.org/specializations/tidyverse-data-science-r). Datacamp also offers [a range of other learning modules for developing data science skills in R](https://learn.datacamp.com/career-tracks/data-scientist-with-r). 
 
 With your data organized into a `tsibble` object, you are positioned to do some *exploratory data analysis*, the topic of the next assignment. If you want to get a head start, check out the functions for data visualization and exploratory analysis of time series in the [feasts package](https://feasts.tidyverts.org/). Or work through the examples in [Chapter 2](https://otexts.com/fpp3/graphics.html) or [Chapter 4](https://otexts.com/fpp3/features.html) of [Forecasting: Principles and Practice, 3rd ed.](https://otexts.com/fpp3/) 
 
