@@ -8,19 +8,13 @@ output:
 ## Graphics files included in this directory:
 
 ```{r include all figures, results ="asis", echo = FALSE}
-graph_ext <- "(png|jpg|jpeg|gif|pdf)$"
+# Knit this file README.Rmd to create a new file README.md
+# displaying all the graphics in the directory as one file
+# that can be viewed on Github
 
-fig_files <- dir(pattern = graph_ext)
+graph_ext <- "(png|jpg|jpeg|gif|pdf)$"   # List file extensions for graphic images
 
-#cat(paste0("\n\n***\n\n**", fig_files, "**:<center>![](", fig_files, ")</center>\n\n***\n\n"))
+fig_files <- dir(pattern = graph_ext)    # List all the graphics files
+
 cat(paste0("\n\n***\n\n##### ", fig_files, "\n\n***\n\n<center>![](", fig_files, ")</center>\n\n***\n\n"))
-
-# for(fig in fig_files){
-#   cat("\n\n*** \n\n")
-#   #print(paste("![,](", fig, ")"))
-#   cat(paste0("**",fig,"** :"))
-#   cat("\n\n*** \n\n")
-#   cat(paste0("<center>![](", fig,")</center>"))
-#   cat("\n\n*** \n\n")
-# }
 ```

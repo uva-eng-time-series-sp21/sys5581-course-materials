@@ -1,0 +1,441 @@
+---
+title:     "Exploratory analysis of time series data: Examples"
+institute: "SYS 5581 Time Series & Forecasting, Spring 2021" 
+author:     "Instructor: Arthur Small"
+date:       "Version of `r Sys.Date()`"
+output: 
+  html_notebook:
+    number_sections: true
+    toc: yes
+    toc_depth: 4
+    code_folding: show # options: show, hide
+    fig_caption: yes
+  # html_document:
+  #       keep_md: yes
+  # pdf_document: default
+bibliography: /Users/Arthur/GitRepos/Teaching/time-series/tseries.bib
+link-citations: yes
+---
+
+```{r set up coding environment, include=FALSE, message=FALSE}
+# library(dplyr) -- don't need this if you are loading the entire 'tidyverse' suite
+library(tidyverse)
+library(lubridate) # For easy handling of time-indexed objects
+
+# if(!('fpp3' %in% installed.packages())) install.packages('fpp3')
+library(fpp3)
+```
+
+
+# Example: Monthly electricity sales for Virginia
+
+## Extract data from remote database
+
+```{r open connection to database, eval=FALSE, include=FALSE}
+# Open connection to a remote database
+# Make sure your VPN network connection is active if needed!
+
+# if(!('RPostgreSQL' %in% installed.packages())) install.packages('RPostgreSQL')
+library(RPostgreSQL)
+
+# "my_postgres_credentials.R" contains the log-in information
+source("/Users/Arthur/GitRepos/Teaching/my_postgres_db_credentials.R")
+
+# Open connection
+db_driver <- dbDriver("PostgreSQL")
+db <- dbConnect(db_driver,user=user, password=password,dbname="postgres", host=host)
+rm(password) 
+
+# check the connection: If function returns value TRUE, the connection is working
+dbExistsTable(db, "metadata")
+```
+
+```{r retrieve data from db, eval=FALSE, message=FALSE}
+esales <- dbGetQuery(db,'SELECT * from eia_elec_sales_va_all_m') # SQL code to retrieve data from a table in the remote database
+# str(esales)
+esales <- as_tibble(esales) # Convert dataframe to a 'tibble' for tidyverse work
+# str(esales)
+```
+
+```{r save data in Apache Arrow format, eval=FALSE}
+# Reference: https://arrow.apache.org/docs/r/
+# if(!('arrow' %in% installed.packages())) install.packages('arrow')
+library(arrow)
+write_feather(esales, "esales.feather")
+```
+
+```{r close db connection, eval=FALSE}
+# Close connection -- this is good practice
+dbDisconnect(db)
+dbUnloadDriver(db_driver)
+```
+
+## Briefly characterize the dataset
+
+```{r read in data}
+library(arrow)
+esales <- read_feather("esales.feather")
+```
+
+```{r }
+print(esales)    # print the data as a table
+summary(esales)  # compute basic summary statistics about the data
+```
+
+```{r use tidyverse syntax to perform some simple data manipulations}
+# References: https://www.tidyverse.org/, https://dplyr.tidyverse.org/
+
+esales %>%
+  filter(year == 2019) %>%
+  filter(value > 9000) %>%
+  print()
+
+esales %>%
+  group_by(month) %>%
+  summarise(mean = mean(value)) -> mean_esales_by_month
+
+esales %>%
+  mutate(sales_TWh = value/1000) %>%
+  select(-value)
+  
+# filter(data object, condition) : syntax for filter() command
+```
+
+## Plot the time series
+
+```{r use ggplot2 to generate a plot}
+#Reference: https://ggplot2.tidyverse.org/
+
+ggplot(data=esales, aes(x=date,y=value)) + 
+  geom_line() + xlab("Year") + ylab("Virginia monthly total electricity sales (GWh)")
+```
+## Convert the data frame into a time series `tsibble` object
+
+```{r}
+library(lubridate) # Make it easy to deal with dates
+
+esales %>% filter(month==3)                   # These three lines of code
+esales %>% filter(month(date)==3)             #   all do
+esales %>% filter(lubridate::month(date)==3)  #   the same thing.
+
+# We don't have to keep the 'year' and 'month' column: can recover them if needed
+
+esales %>%
+  select(date, sales_GWh = value) -> esales_tbl
+
+print(elsales_tbl)
+```
+
+```{r}
+# install.packages("tsibble")
+library(tsibble) # Reference: https://tsibble.tidyverts.org/articles/intro-tsibble.html
+
+esales_tbl %>% as_tsibble(index = date) -> elsales_tbl_ts
+
+print(elsales_tbl_ts)
+```
+
+## Make some plots
+
+###  Make a histogram of monthly sales
+
+```{r make a histogram of the data}
+hist(elsales_tbl_ts$sales_GWh, breaks=40)
+```
+
+###  Make a seasonal plot
+
+```{r, eval=FALSE}
+elsales_tbl_ts %>% 
+  feasts::gg_season(sales_GWh, labels = "both") + ylab("Virginia electricity sales (GWh)")
+```
+
+```{r}
+# install.packages("feasts"), Reference: https://feasts.tidyverts.org/
+library(feasts)
+
+elsales_tbl_ts %>% 
+  mutate(Month = tsibble::yearmonth(date)) %>% 
+  as_tsibble(index = Month) %>%
+  select(Month,sales_GWh) -> vaelsales_tbl_ts
+
+print(vaelsales_tbl_ts)
+```
+
+```{r , warning=FALSE}
+vaelsales_tbl_ts %>% gg_season(sales_GWh, labels = "both") + ylab("Virginia electricity sales (GWh)")
+```
+
+
+```{r}
+vaelsales_tbl_ts %>% 
+  gg_subseries(sales_GWh)
+```
+
+```{r plot lagged values}
+vaelsales_tbl_ts  %>% filter(month(Month) %in% c(3,6,9,12)) %>% gg_lag(sales_GWh, lags = 1:2)
+
+vaelsales_tbl_ts  %>% filter(month(Month) == 1) %>% gg_lag(sales_GWh, lags = 1:2)
+```
+
+```{r}
+vaelsales_tbl_ts %>% ACF(sales_GWh) %>% autoplot()
+```
+
+```{r perform automated time series decomposition}
+
+
+# decompose(vaelsales_tbl_ts)
+```
+
+```{r perform additive STL decomposition of the VA electricity sales time series}
+vaelsales_tbl_ts %>%
+  model(STL(sales_GWh ~ trend(window=21) + season(window='periodic'), robust = TRUE)) %>%
+  components() %>%
+  autoplot()
+```
+
+```{r perform multiplicative STL decomposition of the VA electricity sales time series}
+vaelsales_tbl_ts %>%
+  mutate(ln_sales_GWh = log(sales_GWh)) %>%
+  model(STL(ln_sales_GWh ~ trend(window=21) + season(window='periodic'),
+    robust = TRUE)) %>%
+  components() %>%
+  autoplot()
+```
+
+```{r}
+vaelsales_tbl_ts %>%
+  features(sales_GWh, feat_stl)
+```
+
+```{r}
+vaelsales_tbl_ts %>%
+  features(sales_GWh, feature_set(pkgs="feasts"))
+```
+
+# Example: Australian production
+
+```{r, warning=FALSE}
+# install.packages('tsibbledata')
+library(tsibbledata)
+
+aus_production
+
+aus_production %>% gg_season(Electricity)
+
+aus_production %>% gg_season(Beer)
+```
+
+# Example: Gross Domestic Product data
+
+## Exploratory data analysis
+
+```{r}
+library(tsibbledata) # Data sets package
+
+print(global_economy)
+```
+
+```{r}
+global_economy %>% filter(Country=="Sweden") %>% print()
+```
+
+```{r}
+global_economy %>%
+  filter(Country=="Sweden") %>%
+  autoplot(GDP) +
+  ggtitle("GDP for Sweden") + ylab("$US billions")
+```
+
+## Fitting data to simple models
+
+```{r}
+global_economy %>% model(trend_model = TSLM(GDP ~ trend())) -> fit
+
+fit
+
+
+```
+
+```{r}
+fit %>% filter(Country == "Sweden") %>% residuals()
+```
+
+```{r}
+
+fit %>% filter(Country == "Sweden") %>% residuals() %>% autoplot(.resid)
+```
+
+### Work with ln(GDP)
+
+```{r}
+global_economy %>%
+  filter(Country=="Sweden") %>%
+  autoplot(log(GDP)) +
+  ggtitle("ln(GDP) for Sweden") + ylab("$US billions")
+```
+
+```{r}
+global_economy %>%
+  model(trend_model = TSLM(log(GDP) ~ trend())) -> logfit
+```
+
+```{r}
+logfit %>% filter(Country == "Sweden") %>% residuals() %>% autoplot()
+```
+
+```{r}
+global_economy %>% model(trend_model = TSLM(log(GDP) ~ log(Population))) -> fit3
+
+fit3 %>% filter(Country == "Sweden") %>% residuals() %>% autoplot()
+
+```
+
+# Producing forecasts
+
+```{r}
+fit %>% forecast(h = "3 years") -> fcast3yrs
+
+fcast3yrs
+
+```
+
+```{r}
+
+fcast3yrs %>% filter(Country == "Sweden", Year == 2020) %>% str()
+```
+
+```{r visualize forecasts}
+fcast3yrs %>% 
+  filter(Country=="Sweden") %>%
+  autoplot(global_economy) +
+  ggtitle("GDP for Sweden") + ylab("$US billions")
+```
+
+## Model residuals vs. forecast errors
+
+Model residuals:
+
+Your data: $y_1, y_2, \ldots, y_T$
+
+Fitted values: $\hat{y}_1, \hat{y}_2, \ldots, \hat{y}_T$
+
+Model residuals: $e_t = y_t - \hat{y}_t$
+
+Forecast errors:
+
+```{r}
+augment(fit)
+```
+
+```{r}
+augment(fit) %>% filter(Country == "Sweden") %>%
+  ggplot(aes(x = .resid)) +
+  geom_histogram(bins = 20) +
+  ggtitle("Histogram of residuals")
+```
+
+## Are the model residuals auto-correlated?
+
+```{r}
+augment(fit) %>% filter(Country == "Sweden") -> augSweden
+
+augSweden %>%
+  ACF(.resid) %>%
+  autoplot() + ggtitle("ACF of residuals")
+```
+
+```{r}
+augment(fit3) %>% filter(Country == "Sweden") -> augSweden3
+
+augSweden3 %>%
+  ACF(.resid) %>%
+  autoplot() + ggtitle("ACF of residuals")
+```
+
+
+# Example: GDP, several countries
+
+
+```{r}
+library(tsibbledata) # Data sets package
+
+nordic <- c("Sweden", "Denmark", "Norway", "Finland")
+
+(global_economy %>% filter(Country %in% nordic) -> nordic_economy)
+
+```
+
+```{r}
+nordic_economy %>% autoplot(GDP)
+```
+
+```{r}
+fitnord <- nordic_economy %>%
+  model(
+    trend_model = TSLM(GDP ~ trend()),
+    trend_model_ln = TSLM(log(GDP) ~ trend()),
+    ets = ETS(GDP ~ trend("A")),
+    arima = ARIMA(GDP)
+  )
+
+fitnord
+```
+
+```{r}
+fitnord %>%
+  select(arima) %>%
+  coef()
+```
+
+
+Denmark: ARMA(1,1)
+
+Finland: MA(2)
+
+Norway: MA(1)
+
+Sweden: MA(2)
+
+```{r}
+nordic_economy %>%
+  model(arima_constrained = ARIMA(GDP ~ pdq(1,0,2))) %>% select(arima_constrained) %>% coef()
+```
+
+```{r}
+fitnord %>% coef() 
+```
+
+```{r}
+fitnord %>%  glance()  
+```
+
+```{r}
+fitnord %>% filter(Country == "Denmark") %>% select(arima) %>% report()
+```
+
+```{r}
+fitnord %>%
+  accuracy() %>%
+  arrange(Country, MPE)
+```
+
+
+
+```{r, eval=FALSE}
+# ETS forecasts
+USAccDeaths %>%
+  ets() %>%
+  forecast() %>%
+  autoplot()
+```
+
+```{r, eval=FALSE}
+str(taylor)
+plot(taylor)
+```
+
+
+
+# References

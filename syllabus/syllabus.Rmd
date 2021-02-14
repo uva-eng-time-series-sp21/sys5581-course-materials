@@ -29,29 +29,6 @@ knitr::opts_chunk$set(warning=F, message=F)
 # knitr::opts_knit$get(kable.force.latex = TRUE)
 ```
 
-
-
-```{r dates_bib, include=FALSE}
-# knitr::opts_chunk$set(cache=FALSE, dev='pdf')
-# mon <- as.Date("2016-08-15")
-# # fri <- as.Date("2016-01-08")
-advdate <- function(obj, adv) {}
-# advdate <- function(obj, adv) {
-#  tmon <- obj + 7*(adv-1)
-#  tfri <- obj + 4 + 7*(adv-1)
-#  tmon <- format(tmon, format="%m/%d")
-#  tfri <- format(tfri, format="%m/%d")
-#  zadv <- sprintf("%02d", adv)
-#  tmp <- paste("Week ",zadv,sep='',", ", tmon," - ",tfri)
-#  return(tmp)
-# }
-# library(RefManageR)
-# # library(knitcitations)
-# # library(rcrossref)
-# bib <- ReadBib("master.bib")
-# myopts <- BibOptions(bib.style = "authoryear", style="latex", first.inits=FALSE, max.names = 20)
-```
-
 *Class meetings:* MW 09:30-10:45 a.m. online via Zoom
 
 *Office Hours:* MW 11:00 a.m.-12:30 p.m. online via Zoom (subject to change). Sign up in advance for a 45-minute session via the Collab "Sign Up" tool. If you cannot make any scheduled time, please contact the instructor via email to schedule an appointment. Meetings online via Zoom: <https://virginia.zoom.us/my/arthursmalliii>
@@ -87,10 +64,10 @@ Each student will make a presentation on their data analysis project. Students w
 
 ## Readings 
 
-The primary text for the course will be *Forecasting: Principles and Practice* by
-Rob J. Hyndman and George Athanasopoulos. This resource is available for free online and is linked from the Collab site. You may purchase a print copy if you wish. The text includes some example code in R, and covers several useful R packages related to time series and forecasting.
+The primary text for the course will be [*Forecasting: Principles and Practice*, 3rd ed.](https://otexts.com/fpp3/) by
+Rob J. Hyndman and George Athanasopoulos. This resource is available for free online and is linked from the Collab site. The text includes example code in R, and covers several useful R packages related to time series and forecasting.
 
-Additional readings including relevant articles will be provided as the course progresses. The choice of readings will depend in part on student interests, as conveyed through their choice of projects. Spatial and spatio-temporal analysis may be covered in class if interest is sufficient.
+Additional readings including relevant articles will be provided as the course progresses. The choice of readings will depend in part on student interests, as conveyed through their choice of projects. 
 
 ## Course Objectives
 
@@ -129,7 +106,7 @@ Regular attendance is very much in your pedagogic interest. However, it is up to
 
 ## Communications protocols, including emails and office hours
 
-I prefer to avoide using email to communicate with students about class matters. For substantive questions about course materials and concepts, please use class time, office hours, or meetings by appointment. Please use email only for brief clarifying questions, or to set up appointments. 
+I prefer to avoid using email to communicate with students about class matters. For substantive questions about course materials and concepts, please use class time, office hours, or meetings by appointment. Please use email only for brief clarifying questions, or to set up appointments. 
 
 ## Academic Dishonesty Policy
 

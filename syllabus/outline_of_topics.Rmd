@@ -1,0 +1,106 @@
+---
+title:    "Outline of topics"
+subtitle: "SYS 5581 Time Series and Forecasting"
+author: "Instructor: Arthur Small"
+date:   "University of Virginia Engineering, Spring 2021"
+
+output: 
+  pdf_document:
+#   keep_tex: true
+    fig_caption: yes
+    latex_engine: pdflatex
+
+  # html_document:
+  #   keep_md: true
+
+urlcolor: blue
+geometry: margin=1in
+
+fontfamily: mathpazo
+fontsize: 11pt
+header-includes:
+   - \linespread{1.05}
+
+bibliography: /Users/Arthur/GitRepos/Teaching/time-series/tseries.bib
+---
+
+```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
+knitr::opts_chunk$set(cache=TRUE)
+knitr::opts_chunk$set(fig.path='figs/')
+knitr::opts_chunk$set(cache.path='_cache/')
+knitr::opts_chunk$set(warning=F, message=F)
+# knitr::opts_knit$get(kable.force.latex = TRUE)
+```
+
+```{r dates_bib, include=FALSE}
+# knitr::opts_chunk$set(cache=FALSE, dev='pdf')
+# mon <- as.Date("2016-08-15")
+# # fri <- as.Date("2016-01-08")
+# advdate <- function(obj, adv) {}
+# advdate <- function(obj, adv) {
+#  tmon <- obj + 7*(adv-1)
+#  tfri <- obj + 4 + 7*(adv-1)
+#  tmon <- format(tmon, format="%m/%d")
+#  tfri <- format(tfri, format="%m/%d")
+#  zadv <- sprintf("%02d", adv)
+#  tmp <- paste("Week ",zadv,sep='',", ", tmon," - ",tfri)
+#  return(tmp)
+# }
+# library(RefManageR)
+# # library(knitcitations)
+# # library(rcrossref)
+# bib <- ReadBib("master.bib")
+# myopts <- BibOptions(bib.style = "authoryear", style="latex", first.inits=FALSE, max.names = 20)
+```
+
+FPP = [Hyndman, R.J., & Athanasopoulos, G. [-@robjhyndmanForecastingPrinciplesPractice2021] *Forecasting: principles and practice, 3rd edition*, OTexts: Melbourne, Australia. OTexts.com/fpp3](https://otexts.com/fpp3/)
+
+# Introduction and setup
+
+Topics:
+
+* What is time series analysis?
+
+
+Readings: 
+
+* FPP, Ch. 1
+
+Assignment: Write a concept note for a potential project.
+
+## Computing setup
+
+Topics: R, R Studio, git, Github, Markdown, R Markdown.
+
+Assignment: Follow instructions in the course [Computing setup guide](https://github.com/uva-eng-time-series-sp21/sys5581-course-materials/blob/master/computing_setup_guide.pdf).
+
+
+# Data extraction, transformation, and loading
+
+Topics:
+
+* Tidy data
+* Tidyverse and tidyverts packages
+
+Readings:
+
+* FPP, Section 2.1
+
+Assignment: [Extract, transform, and load your data](https://github.com/uva-eng-time-series-sp21/sys5581-course-materials/blob/master/assignments/assignment_data_etl.pdf).
+
+# Exploratory data analysis
+
+Readings: FPP, Ch. 2 and Ch. 4
+
+Assignment: Explore your data
+
+
+
+
+
+# Planning a time series analysis project
+
+
+
+
+## References
