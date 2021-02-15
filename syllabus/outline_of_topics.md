@@ -26,13 +26,7 @@ header-includes:
 bibliography: /Users/Arthur/GitRepos/Teaching/time-series/tseries.bib
 ---
 
-```{r setup, include=FALSE, cache=F, message=F, warning=F, results="hide"}
-knitr::opts_chunk$set(cache=TRUE)
-knitr::opts_chunk$set(fig.path='figs/')
-knitr::opts_chunk$set(cache.path='_cache/')
-knitr::opts_chunk$set(warning=F, message=F)
-# knitr::opts_knit$get(kable.force.latex = TRUE)
-```
+
 
 ----
 
