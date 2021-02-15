@@ -6,7 +6,7 @@ date:   "University of Virginia Engineering, Spring 2021"
 
 output: 
   pdf_document:
-    keep_md: true
+    keep_md: false
     fig_caption: yes
     latex_engine: pdflatex
     toc: true
@@ -38,7 +38,7 @@ knitr::opts_chunk$set(warning=F, message=F)
 
 FPP = Hyndman, R.J., & Athanasopoulos, G. [-@robjhyndmanForecastingPrinciplesPractice2021] [*Forecasting: principles and practice, 3rd edition*](https://otexts.com/fpp3/), OTexts: Melbourne, Australia. OTexts.com/fpp3
 
-# Part I: Introduction
+# Introduction
 
 ## Course introduction
 
@@ -66,7 +66,7 @@ Assignment: Follow instructions in the course [Computing setup guide](https://gi
 ## Other helpful resources
 
 
-# Part 2: Data
+# Data
 
 ## Finding and acquiring a dataset for your project
 
@@ -101,7 +101,7 @@ Readings:
 
 Assignment: [Extract, transform, and load your data](https://github.com/uva-eng-time-series-sp21/sys5581-course-materials/blob/master/assignments/assignment_data_etl.pdf).
 
-# Part 3: Exploratory data analysis
+# Exploratory data analysis
 
 Topics:
 
@@ -115,7 +115,7 @@ Readings: FPP, Sections 2.2--2.6.
 Assignment: Explore your data.
 
 
-# Part 4: Modeling the data-generating process
+# Modeling the data-generating process
 
 ## The normal linear model
 
