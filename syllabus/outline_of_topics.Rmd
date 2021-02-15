@@ -46,9 +46,7 @@ Topics:
 
 * What is time series analysis?
 
-Readings: 
-
-* FPP, Ch. 1
+Readings: FPP, Ch. 1
 
 
 ## The project
@@ -80,8 +78,10 @@ Some data sources you might check out:
 * [Flowing Data](https://flowingdata.com/category/statistics/data-sources/) data sources.
 * [The Stanford Open Policing Project](https://openpolicing.stanford.edu/). "On a typical day in the United States, police officers make more than 50,000 traffic stops. Our team is gathering, analyzing, and releasing records from millions of traffic stops by law enforcement agencies across the country."
 * [Open U.S. Federal Government Data](https://www.data.gov/opendata/).
-* [New York City 311 Data](https://portal.311.nyc.gov/article/?kanumber=KA-02893).
 * [Charlottesville, Virginia open data](https://opendata.charlottesville.org/)
+* [New York City 311 Data](https://portal.311.nyc.gov/article/?kanumber=KA-02893).
+
+![NYC 311 calls by hour. Source: https://www.wired.com/2010/11/ff_311_new_york/](../graphics/ff_311_newyork1b_f.jpg)
 
 
 ## Data extraction, transformation, and loading

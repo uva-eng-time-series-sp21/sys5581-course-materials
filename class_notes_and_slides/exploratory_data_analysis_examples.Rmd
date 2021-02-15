@@ -80,6 +80,7 @@ esales <- read_feather("esales.feather")
 ```{r }
 print(esales)    # print the data as a table
 summary(esales)  # compute basic summary statistics about the data
+boxplot(esales)
 ```
 
 ```{r use tidyverse syntax to perform some simple data manipulations}
@@ -90,9 +91,9 @@ esales %>%
   filter(value > 9000) %>%
   print()
 
-esales %>%
-  group_by(month) %>%
-  summarise(mean = mean(value)) -> mean_esales_by_month
+(esales %>%
+  group_by(year) %>%
+  summarise(Total = sum(value)) -> total_esales_by_year)
 
 esales %>%
   mutate(sales_TWh = value/1000) %>%
@@ -106,13 +107,12 @@ esales %>%
 ```{r use ggplot2 to generate a plot}
 #Reference: https://ggplot2.tidyverse.org/
 
-ggplot(data=esales, aes(x=date,y=value)) + 
+ggplot(data=esales, aes(x=date,y=value)) +
   geom_line() + xlab("Year") + ylab("Virginia monthly total electricity sales (GWh)")
 ```
-## Convert the data frame into a time series `tsibble` object
 
 ```{r}
-library(lubridate) # Make it easy to deal with dates
+# library(lubridate) # Make it easy to deal with dates
 
 esales %>% filter(month==3)                   # These three lines of code
 esales %>% filter(month(date)==3)             #   all do
@@ -123,8 +123,11 @@ esales %>% filter(lubridate::month(date)==3)  #   the same thing.
 esales %>%
   select(date, sales_GWh = value) -> esales_tbl
 
-print(elsales_tbl)
+print(esales_tbl)
 ```
+
+## Convert the data frame into a time series `tsibble` object
+
 
 ```{r}
 # install.packages("tsibble")
@@ -156,11 +159,15 @@ library(feasts)
 
 elsales_tbl_ts %>% 
   mutate(Month = tsibble::yearmonth(date)) %>% 
-  as_tsibble(index = Month) %>%
+  as_tsibble(index = Month) %>% 
   select(Month,sales_GWh) -> vaelsales_tbl_ts
 
 print(vaelsales_tbl_ts)
 ```
+```{r}
+autoplot(vaelsales_tbl_ts) + ylab("Virginia monthly total electricity sales (GWh)")
+```
+## Make seasonal plots
 
 ```{r , warning=FALSE}
 vaelsales_tbl_ts %>% gg_season(sales_GWh, labels = "both") + ylab("Virginia electricity sales (GWh)")
