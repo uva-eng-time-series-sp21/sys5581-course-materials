@@ -85,6 +85,7 @@ boxplot(esales)
 
 ```{r use tidyverse syntax to perform some simple data manipulations}
 # References: https://www.tidyverse.org/, https://dplyr.tidyverse.org/
+# filter(data object, condition) : syntax for filter() command
 
 esales %>%
   filter(year == 2019) %>%
@@ -98,8 +99,6 @@ esales %>%
 esales %>%
   mutate(sales_TWh = value/1000) %>%
   select(-value)
-  
-# filter(data object, condition) : syntax for filter() command
 ```
 
 ## Plot the time series
@@ -149,11 +148,12 @@ hist(elsales_tbl_ts$sales_GWh, breaks=40)
 ###  Make a seasonal plot
 
 ```{r, eval=FALSE}
+# This plot won't work. Why not?
 elsales_tbl_ts %>% 
   feasts::gg_season(sales_GWh, labels = "both") + ylab("Virginia electricity sales (GWh)")
 ```
 
-```{r}
+```{r Change the tsibble so index is monthly}
 # install.packages("feasts"), Reference: https://feasts.tidyverts.org/
 library(feasts)
 
@@ -165,9 +165,11 @@ elsales_tbl_ts %>%
 print(vaelsales_tbl_ts)
 ```
 ```{r}
-autoplot(vaelsales_tbl_ts) + ylab("Virginia monthly total electricity sales (GWh)")
+autoplot(vaelsales_tbl_ts, sales_GWh) + 
+  ylab("Virginia monthly total electricity sales (GWh)") + 
+  xlab("")  # Leave horiz. axis label blank
 ```
-## Make seasonal plots
+## Seasonal plots and seasonal subseries plots
 
 ```{r , warning=FALSE}
 vaelsales_tbl_ts %>% gg_season(sales_GWh, labels = "both") + ylab("Virginia electricity sales (GWh)")
@@ -176,49 +178,67 @@ vaelsales_tbl_ts %>% gg_season(sales_GWh, labels = "both") + ylab("Virginia elec
 
 ```{r}
 vaelsales_tbl_ts %>% 
-  gg_subseries(sales_GWh)
+  gg_subseries(sales_GWh) +
+  labs(
+    y = "Sales (GWh)",
+    title = "Seasonal subseries plot: Virginia electricity sales"
+  )
 ```
 
-```{r plot lagged values}
-vaelsales_tbl_ts  %>% filter(month(Month) %in% c(3,6,9,12)) %>% gg_lag(sales_GWh, lags = 1:2)
+## Scatterplots
 
-vaelsales_tbl_ts  %>% filter(month(Month) == 1) %>% gg_lag(sales_GWh, lags = 1:2)
+Investigating relationships between two variables. Scatterplots. Correlation. Scatterplot matrices.
+
+Readings: FPP Sect. 2.6
+
+```{r}
+vic_elec
+
+summary(vic_elec)
+
+vic_elec %>%
+  filter(year(Time) == 2013) %>%
+  autoplot(Demand) +
+  labs(
+    y = "Demand (GW)",
+    title = "Half-hourly electricity demand: Victoria"
+  )
+```
+```{r}
+vic_elec %>%
+  filter(year(Time) == 2013) %>%
+  autoplot(Temperature) +
+  labs(
+    y = "Temperature (degrees Celsius)",
+    title = "Half-hourly temperatures: Melbourne, Australia"
+  )
 ```
 
 ```{r}
-vaelsales_tbl_ts %>% ACF(sales_GWh) %>% autoplot()
+vic_elec %>%
+  filter(year(Time) == 2013) %>%
+  ggplot(aes(x = Temperature, y = Demand)) + 
+#  geom_density2d() +
+  geom_point(size=0.1, aes(colour=Holiday), alpha = 0.4) +
+  labs(y = "Demand (GW)", x = "Temperature (degrees Celsius)")
 ```
+A Scatterplot matrix
 
-```{r perform automated time series decomposition}
+```{r, warning=FALSE}
+vic_elec
 
+boxplot(vic_elec$Temperature)
 
-# decompose(vaelsales_tbl_ts)
-```
+# install.packages("GGally")
+vic_elec %>% 
+  # mutate(Temperature = round(Temperature)) %>%
+  # pivot_wider(values_from=c(Demand,Temperature), names_from=Holiday) %>%
+  GGally::ggpairs(columns = 3:2)
 
-```{r perform additive STL decomposition of the VA electricity sales time series}
-vaelsales_tbl_ts %>%
-  model(STL(sales_GWh ~ trend(window=21) + season(window='periodic'), robust = TRUE)) %>%
-  components() %>%
-  autoplot()
-```
-
-```{r perform multiplicative STL decomposition of the VA electricity sales time series}
-vaelsales_tbl_ts %>%
-  mutate(ln_sales_GWh = log(sales_GWh)) %>%
-  model(STL(ln_sales_GWh ~ trend(window=21) + season(window='periodic'),
-    robust = TRUE)) %>%
-  components() %>%
-  autoplot()
-```
-
-```{r}
-vaelsales_tbl_ts %>%
-  features(sales_GWh, feat_stl)
-```
-
-```{r}
-vaelsales_tbl_ts %>%
-  features(sales_GWh, feature_set(pkgs="feasts"))
+vic_elec %>% 
+  mutate(Year = factor(year(Date))) %>%
+  select(-c(Date, Holiday)) %>%
+  GGally::ggpairs(columns = 4:2)
 ```
 
 # Example: Australian production
@@ -441,6 +461,50 @@ USAccDeaths %>%
 ```{r, eval=FALSE}
 str(taylor)
 plot(taylor)
+```
+
+## Plot lagged values
+
+```{r plot lagged values}
+vaelsales_tbl_ts  %>% filter(month(Month) %in% c(3,6,9,12)) %>% gg_lag(sales_GWh, lags = 1:2)
+
+vaelsales_tbl_ts  %>% filter(month(Month) == 1) %>% gg_lag(sales_GWh, lags = 1:2)
+```
+
+```{r}
+vaelsales_tbl_ts %>% ACF(sales_GWh) %>% autoplot()
+```
+
+```{r perform automated time series decomposition}
+
+
+# decompose(vaelsales_tbl_ts)
+```
+
+```{r perform additive STL decomposition of the VA electricity sales time series}
+vaelsales_tbl_ts %>%
+  model(STL(sales_GWh ~ trend(window=21) + season(window='periodic'), robust = TRUE)) %>%
+  components() %>%
+  autoplot()
+```
+
+```{r perform multiplicative STL decomposition of the VA electricity sales time series}
+vaelsales_tbl_ts %>%
+  mutate(ln_sales_GWh = log(sales_GWh)) %>%
+  model(STL(ln_sales_GWh ~ trend(window=21) + season(window='periodic'),
+    robust = TRUE)) %>%
+  components() %>%
+  autoplot()
+```
+
+```{r}
+vaelsales_tbl_ts %>%
+  features(sales_GWh, feat_stl)
+```
+
+```{r}
+vaelsales_tbl_ts %>%
+  features(sales_GWh, feature_set(pkgs="feasts"))
 ```
 
 
