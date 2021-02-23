@@ -5,6 +5,7 @@ output:
     fig_caption: yes
     keep_md: yes
 ---
+
 ## Graphics files included in this directory:
 
 ```{r include all figures, results ="asis", echo = FALSE}
