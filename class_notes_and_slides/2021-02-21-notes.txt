@@ -1,0 +1,118 @@
+Notes on ETL assignment
+2021-02-22
+
+# Announcement: One more week to revise & resubmit data ETL assignment
+
+* Many folks had issues, as we'll discuss
+
+To do:
+
+* Finalize your concept note. 
+  - State clearly the question(s) you will attempt to answer. 
+  - Make sure this is a clear, answerable question. Don't do "a study of... ". 
+  - Make sure this is genuinely a question about a *time series process*. 
+    - Imagine a metronome: each time you hear a 'click', another row of data values gets added to your table.
+  - Make sure your data set is aligned with your question.
+
+* Organize your data table(s) so that they 'match' your question.
+
+
+# ETL strategy: Design your end-point data table(s)
+
+Data ETL is a creative activity! (Your jobs are secure.)
+
+Starting point: Multiple source files, ...
+
+What's your desired end point?
+
+Design your end point first (at least, in your head).
+
+Typical structure:
+
+| Date + time  |  
+
+
+
+
+Then munge your data to get to the end point.
+
+
+
+
+
+# Time
+
+## Time series data
+
+* Just because your data set has some dates, doesn't mean you have a time series data set.
+
+
+## Time indexing in data
+
+* Depending on how dates and times are recorded in your raw data, you may face more or less work to organize them into form(s) suitable as `tsibble` index variable.
+
+ - See R4DS ch. 16.
+ 
+ - `lubridate` package may be valuable
+
+
+# Data extraction
+
+* Reproducible extraction of data from source location: may be complicated by access protocols.
+
+  - access tokens; APIs
+  - raw data from github for private repos
+  - databases
+  - httr
+  
+ Make your extraction code "as reproducicle as possible", subject to these access constraints. At minimum, document clearly how you obtained the data, so others could follow your path, even if not via pure code.
+ 
+Reminder: Keep your raw data in read-only mode. Don't edit these files. Write code to transform the raw data into form you will use for analysis.
+
+```
+---- Forwarded Message -----
+From: GitHub <noreply@github.com>
+To: Arthur Small <asmall@virginia.edu>
+Sent: Sunday, February 21, 2021, 6:20:58 AM EST
+Subject: [GitHub] Deprecation Notice
+
+Hi @arthursmalliii,
+
+You recently used a password to access the repository at uva-eng-time-series-sp21/coronato-nicholas with git using git/2.30.0.
+
+Basic authentication using a password to Git is deprecated and will soon no longer work. Visit https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/ for more information around suggested workarounds and removal dates.
+
+Thanks,
+The GitHub Team
+```
+
+## Reading in data from source files
+
+ - Note `readr` package, esp. `readr::read_csv()` function. 
+
+- Declaring data types
+
+
+# Data transformation
+
+
+
+
+
+* Dropping empty columns
+
+
+
+# Running diagnostics on your tsibble
+
+** Ideally, should have exactly one row (i.e., one vector of measured values) for each time interval (`index`) and each value of the `key` variables. 
+ -- May not have any duplicates.
+ -- May have missing values
+ 
+## Duplicate values 
+
+
+## Missing values
+
+
+## Irregular time intervals

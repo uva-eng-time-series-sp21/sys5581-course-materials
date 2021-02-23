@@ -1,0 +1,18 @@
+---
+title:     "Class notes: More on ETL"
+institute: "SYS 5581 Time Series & Forecasting, Spring 2021" 
+author:     "Instructor: Arthur Small"
+date:       "2021-02-22"
+output: 
+  html_notebook:
+    number_sections: true
+    toc: yes
+    toc_depth: 4
+    code_folding: show # options: show, hide
+    fig_caption: yes
+  # html_document:
+  #       keep_md: yes
+  # pdf_document: default
+bibliography: /Users/Arthur/GitRepos/Teaching/time-series/tseries.bib
+link-citations: yes
+---

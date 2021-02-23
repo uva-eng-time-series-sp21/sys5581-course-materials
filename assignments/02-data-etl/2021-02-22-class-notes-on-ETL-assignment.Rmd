@@ -1,0 +1,163 @@
+---
+title:     "Class notes: More on ETL"
+institute: "SYS 5581 Time Series & Forecasting, Spring 2021" 
+author:     "Instructor: Arthur Small"
+date:       "2021-02-22"
+output: 
+  html_notebook:
+    number_sections: true
+    toc: yes
+    toc_depth: 4
+    code_folding: show # options: show, hide
+    fig_caption: yes
+  # html_document:
+  #       keep_md: yes
+  # pdf_document: default
+bibliography: /Users/Arthur/GitRepos/Teaching/time-series/tseries.bib
+link-citations: yes
+---
+
+
+
+# Announcement: One more week to revise & resubmit data ETL assignment {-}
+
+Many folks had issues, as we'll discuss.
+
+To do:
+
+* Finalize your concept note. 
+  - State clearly the question(s) you will attempt to answer. 
+  - Make sure this is a clear, answerable question. Don't do "a study of... ". 
+  - Make sure this is genuinely a question about a *time series process*. 
+    - Imagine a metronome: each time you hear a 'click', another row of data values gets added to your table.
+
+* Organize your data table(s) so that they 'match' your question.
+  - Make sure your data set is aligned with your question.
+
+
+# ETL strategy: Design your end-point data table(s)
+
+Data ETL is a creative activity! (Your jobs are secure.)
+
+Starting point: Multiple source files, mess, etc. This is real life as a data scientist!
+
+What's your desired end point?
+
+## Design your end point first (at least, in your head).
+
+* Which columns? In which order?
+* Which data types should the different columns have?
+* For `tsibble` objects: 
+  - Which column is the `index`? Must have date+time values, at regular intervals.
+  - Which columns contain `key` values? 
+      - These are values that *don't* change with time.
+      - Each value of the `key` corresponds to a distinct time series.
+      - Cannot have duplicate rows that share an `index` + `key` value.
+  - Remaining columns contain observational data: one row for each time step and `key` value.
+      - What data types should these be?
+      - Might choose to drop columns you aren't going to use, to reduce clutter.
+
+
+## Typical structure for a time series data table:
+
+ | Date + time  |  Series |  Value_1 | Value_2 | Value_3 |
+ |:-----------:|:----------:|:-------:|:-------:|:--------:|
+ | 2020-02-01  |   "Virginia" | 33.57  | 29     |  "friendly" |
+ | 2020-02-01  |   "Idaho" | 0.22  | 18     |  "hostile" |
+ |   ...          |  ...   | ...    | ... | ... |       
+ |  `index`     |   `key`  |         |          |          |
+ |  [date]      |   [fctr] |  [dbl]  |  [int]   |  [fctr]  | 
+
+
+Then munge your data to get to your desired end point.
+
+Recommended practices:
+
+* Put `index` field in the left-most column.
+* Next, put all the `key` fields.
+* Then finally the data values. Start with the most important ones.
+
+## Data types
+
+Choose your data types!
+
+Reference: R4DS Ch. 15, 16
+
+
+
+# Time
+
+## Time series data
+
+* Just because your data set has some dates, doesn't mean you have a time series data set.
+
+
+## Time indexing in data
+
+* Depending on how dates and times are recorded in your raw data, you may face more or less work to organize them into form(s) suitable as `tsibble` index variable.
+
+ - See R4DS ch. 16.
+ 
+ - `lubridate` package may be valuable
+
+
+# Data extraction
+
+* Reproducible extraction of data from source location: may be complicated by access protocols.
+
+  - access tokens; APIs
+  - raw data from github for private repos
+  - databases
+  - httr
+  
+ Make your extraction code "as reproducicle as possible", subject to these access constraints. At minimum, document clearly how you obtained the data, so others could follow your path, even if not via pure code.
+ 
+Reminder: Keep your raw data in read-only mode. Don't edit these files. Write code to transform the raw data into form you will use for analysis.
+
+```
+---- Forwarded Message -----
+From: GitHub <noreply@github.com>
+To: Arthur Small <asmall@virginia.edu>
+Sent: Sunday, February 21, 2021, 6:20:58 AM EST
+Subject: [GitHub] Deprecation Notice
+
+Hi @arthursmalliii,
+
+You recently used a password to access the repository at uva-eng-time-series-sp21/coronato-nicholas with git using git/2.30.0.
+
+Basic authentication using a password to Git is deprecated and will soon no longer work. Visit https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/ for more information around suggested workarounds and removal dates.
+
+Thanks,
+The GitHub Team
+```
+
+## Reading in data from source files
+
+ - Note `readr` package, esp. `readr::read_csv()` function. 
+
+- Declaring data types
+
+
+# Data transformation
+
+
+
+
+
+* Dropping empty columns
+
+
+
+# Running diagnostics on your tsibble
+
+** Ideally, should have exactly one row (i.e., one vector of measured values) for each time interval (`index`) and each value of the `key` variables. 
+ -- May not have any duplicates.
+ -- May have missing values
+ 
+## Duplicate values 
+
+
+## Missing values
+
+
+## Irregular time intervals
