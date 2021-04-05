@@ -15,6 +15,8 @@ output:
   # pdf_document: default
 bibliography: /Users/Arthur/GitRepos/Teaching/time-series/tseries.bib
 link-citations: yes
+editor_options: 
+  chunk_output_type: inline
 ---
 
 
@@ -110,7 +112,7 @@ Reference: R4DS Ch. 15, 16
   - databases
   - httr
   
- Make your extraction code "as reproducicle as possible", subject to these access constraints. At minimum, document clearly how you obtained the data, so others could follow your path, even if not via pure code.
+Make your extraction code "as reproducicle as possible", subject to these access constraints. At minimum, document clearly how you obtained the data, so others could follow your path, even if not via pure code.
  
 Reminder: Keep your raw data in read-only mode. Don't edit these files. Write code to transform the raw data into form you will use for analysis.
 
@@ -133,31 +135,23 @@ The GitHub Team
 
 ## Reading in data from source files
 
- - Note `readr` package, esp. `readr::read_csv()` function. 
+- Declaring data types as you read in data.
 
-- Declaring data types
+### Example using readr::read_csv
 
+```{r Read in data from listed source}
+# Data Source: https://www.eia.gov/petroleum/supply/weekly/
 
-# Data transformation
+# Original code:
+PetroStocksData <- read_csv("PetroStocks.csv")
+names(PetroStocksData) <- PetroStocksData[2,] # assign correct header
+PetroStocksData <- PetroStocksData[-1,] # remove unused rows
+PetroStocksData <- PetroStocksData[-1,] # remove unused rows
 
+### Revised using readr::read_csv() to skip empty rows and declare data types
+### Declare column types within the read_csv() function call, to save yourself trouble later:
+ps_tbl <- readr::read_csv("PetroStocks.csv", skip = 2, col_types = cols(.default = col_double(),
+                                                                       "Date"   = col_character())) 
 
-
-
-
-* Dropping empty columns
-
-
-
-# Running diagnostics on your tsibble
-
-** Ideally, should have exactly one row (i.e., one vector of measured values) for each time interval (`index`) and each value of the `key` variables. 
- -- May not have any duplicates.
- -- May have missing values
- 
-## Duplicate values 
-
-
-## Missing values
-
-
-## Irregular time intervals
+### Reference: https://readr.tidyverse.org/reference/read_delim.html
+```

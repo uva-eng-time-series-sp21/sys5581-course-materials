@@ -1,0 +1,55 @@
+---
+title:     "Class notes: More on ETL, continued"
+institute: "SYS 5581 Time Series & Forecasting, Spring 2021" 
+author:     "Instructor: Arthur Small"
+date:       "2021-02-24"
+output: 
+  html_notebook:
+    number_sections: true
+    toc: yes
+    toc_depth: 4
+    code_folding: show # options: show, hide
+    fig_caption: yes
+  # html_document:
+  #       keep_md: yes
+  # pdf_document: default
+bibliography: /Users/Arthur/GitRepos/Teaching/time-series/tseries.bib
+link-citations: yes
+---
+
+# Data transformation
+
+## Dropping empty rows and columns
+
+```{r Drop empty columns - original vs revised, eval=FALSE}
+# Original: empty column identified manually
+PetroStocksData <- PetroStocksData[,-21] # Delete unused last column
+
+### Revised: This code removes *all* empty columns:
+ps_tbl %>% select_if(function(x) !all(is.na(x))) -> ps_tbl
+```
+
+
+```{r Drop empty rows - original vs revised, eval=FALSE}
+# Original: empty row identified manually:
+PetroStocksData <- PetroStocksData[-2004,] # Delete unused last row
+
+### Revised: This code removes all empty rows:
+ps_tbl %>% filter(!across(everything(), is.na)) -> ps_tbl
+```
+
+
+
+# Running diagnostics on your tsibble
+
+** Ideally, should have exactly one row (i.e., one vector of measured values) for each time interval (`index`) and each value of the `key` variables. 
+ -- May not have any duplicates.
+ -- May have missing values
+ 
+## Duplicate values 
+
+
+## Missing values
+
+
+## Irregular time intervals

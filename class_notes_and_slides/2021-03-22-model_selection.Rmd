@@ -1,0 +1,78 @@
+---
+title: 'Class notes: Model Selection, continued'
+author: 'Instructor: Arthur Small'
+date: '2021-03-24'
+output:  
+  slidy_presentation: default
+  html_notebook:
+    number_sections: yes
+    toc: yes
+    toc_depth: 4
+    code_folding: show
+    fig_caption: yes
+  html_document:
+    toc: yes
+    toc_depth: '4'
+    df_print: paged
+institute: SYS 5581 Time Series & Forecasting, Spring 2021
+bibliography: /Users/Arthur/GitRepos/Teaching/time-series/tseries.bib
+link-citations: yes
+---
+
+# Announcements and general comments
+
+* Revised deadlines:
+  - Weds Mar 24: Project proposal
+     - Question
+     - Data
+     - Data prep
+     - Data exploration, extraction of salient features
+  - Weds Mar 31: Model
+  
+* Github: processing comments & suggestions
+
+# Last time
+
+# Today:
+
+* Working with modeling functions in `fable` package
+
+* Adding bibliographies and citations to Markdown documents: 
+  - Zotero for managing libraries of resources: web, desktop, browser plugin
+  - Bibtex for generating bibliographies in documents: .bib files, BibTeX, bibdesk
+
+
+
+
+
+<span style="color: blue">Part I</span>
+===
+
+<span style="color: blue">*Exploratory data analysis*</span>
+
+Why fit statistical (regression) models?
+===
+
+You have some data $X_1,\ldots,X_p,Y$: the variables $X_1,\ldots,X_p$ are called predictors, and $Y$ is called a response. You're interested in the relationship that governs them
+
+So you posit that $Y|X_1,\ldots,X_p \sim P_\theta$, where $\theta$ represents some unknown parameters. This is called **regression model** for $Y$ given $X_1,\ldots,X_p$. Goal is to estimate parameters. Why?
+
+- To assess model validity, predictor importance (**inference**)
+- To predict future $Y$'s from future $X_1,\ldots,X_p$'s (**prediction**)
+
+
+
+# Model selection: Regression models: Summary
+
+You want to explain observed $y_1, \ldots, y_T$, and predict future $y_{T+1}, y_{T+2}, \ldots$.
+
+Observed values may depend on past values of $y$, and/or on other predictors $X_1,\ldots,X_K$.
+
+
+
+
+
+# 
+
+
+
