@@ -1,18 +1,20 @@
 ---
 title:     "Project Proposal Instructions with example code"
-institute: "SYS 5581 Time Series & Forecasting, Spring 2021" 
+institute: "SYS 7030 Time Series Analysis & Forecasting, Fall 2020" 
 author:     "Instructor: Arthur Small"
 date:       "Version of `r Sys.Date()`"
-output: 
+output:
+   # pdf_document:
+   #   toc: false
   html_notebook:
     number_sections: true
-    toc: yes
+    # toc: yes
     toc_depth: 4
     code_folding: show # options: show, hide
     fig_caption: yes
   # html_document:
   #       keep_md: yes
-  pdf_document: default
+  # pdf_document: default
 bibliography: /Users/Arthur/GitRepos/Teaching/time-series/tseries.bib
 link-citations: yes
 ---
@@ -21,7 +23,7 @@ In this assignment you will develop your initial concept note into a draft of a 
 
 Your proposal should include at least the following sections and information.
 
-**Front matter:** Descriptive title, your name, date, reference to "SYS 5581 Time Series & Forecasting, Spring 2021".
+**Front matter:** Descriptive title, your name, date, reference to "SYS 7030 Time Series Analysis & Forecasting, Fall 2020".
 
 **Abstract:** A very brief summary of the project.
 
@@ -33,7 +35,7 @@ Give a narrative description of the problem you are addressing, and the methods 
 -   Why is this question important? (Who cares?)
 -   How will you go about attempting to answer this question?
 
-This work addresses the question: Why do people not use probabilistic forecasts for decision-making [@burnhamModelSelectionMultimodel2002]?
+This work addresses the question: Why do people not use probabilistic forecasts for decision-making [@councilCompletingForecastCharacterizing2007]?
 
 # The data and the data-generating process
 
@@ -45,9 +47,6 @@ Since these will be time series data: identify the frequency of the data series 
 # library(dplyr) -- don't need this if you are loading the entire 'tidyverse' suite
 library(tidyverse)
 library(lubridate) # For easy handling of time-indexed objects
-
-# if(!('fpp3' %in% installed.packages())) install.packages('fpp3')
-library(fpp3)
 ```
 
 ```{r open connection to database, eval=FALSE, include=FALSE}
@@ -70,6 +69,7 @@ dbExistsTable(db, "metadata")
 ```
 
 ```{r retrieve data from db, eval=FALSE, message=FALSE}
+
 esales <- dbGetQuery(db,'SELECT * from eia_elec_sales_va_all_m') # SQL code to retrieve data from a table in the remote database
 # str(esales)
 esales <- as_tibble(esales) # Convert dataframe to a 'tibble' for tidyverse work
@@ -205,7 +205,8 @@ vaelsales_tbl_ts %>% ACF(sales_GWh) %>% autoplot()
 ```
 
 ```{r perform automated time series decomposition}
-
+# if(!('fpp3' %in% installed.packages())) install.packages('fpp3')
+library(fpp3)
 
 # decompose(vaelsales_tbl_ts)
 ```
@@ -273,7 +274,7 @@ fit %>% filter(Country == "Sweden") %>% residuals()
 
 ```{r}
 
-fit %>% filter(Country == "Sweden") %>% residuals() %>% autoplot(.resid)
+fit %>% filter(Country == "Sweden") %>% residuals() %>% autoplot(.resid) + geom_point()
 ```
 
 ### Work with ln(GDP)
